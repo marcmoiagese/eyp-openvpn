@@ -1,0 +1,30 @@
+client
+dev <%= @dev %>
+
+<% if @comp_lzo -%>
+comp-lzo
+<% end -%>
+<% if defined?(@proto) -%>
+proto <%= @proto %>
+<% end -%>
+
+<% if @persist_key -%>
+persist-key
+<% end -%>
+<% if @persist_tun -%>
+persist-tun
+<% end -%>
+
+remote <%= @remote %> <%= @remote_port %>
+
+<% if @tls_client -%>
+tls-client
+<% end -%>
+
+<% if defined?(@ns_cert_type) -%>
+ns-cert-type <%= @ns_cert_type %>
+<% end -%>
+
+ca <%= scope.lookupvar('openvpn::params::client_conf_dir') %>/<%= @client_name %>/ca.pem
+cert <%= scope.lookupvar('openvpn::params::client_conf_dir') %>/<%= @client_name %>/cert.pem
+key <%= scope.lookupvar('openvpn::params::client_conf_dir') %>/<%= @client_name %>/key.pem

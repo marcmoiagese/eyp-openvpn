@@ -1,0 +1,94 @@
+dev <%= @dev %>
+
+<% if defined?(@port) -%>
+port <%= @port %>
+<% end -%>
+
+<% if defined?(@proto) -%>
+proto <%= @proto %>
+<% end -%>
+<% if defined?(@local) -%>
+local <%= @local %>
+<% end -%>
+
+user <%= @user %>
+group <%= @group %>
+
+# Verbosity level.
+# 0 -- quiet except for fatal errors.
+# 1 -- mostly quiet, but display non-fatal network errors.
+# 3 -- medium output, good for normal operation.
+# 9 -- verbose, good for troubleshooting
+verb <%= @verbosity %>
+
+<% if @client_to_client -%>
+# If client-to-client is enabled, the VPN server forwards client-to-client
+# packets internally without sending them to the IP layer of the host.
+client-to-client
+<% end -%>
+
+<% if defined?(@topology) -%>
+topology <%= @topology %>
+<% end -%>
+<% if defined?(@server) -%>
+server <%= @server %> <%= @server_netmask %>
+<% end -%>
+
+# learn-address /usr/local/etc/openvpn/tcp-route.sh
+# script-security 2
+
+### SSL
+<% if @easy_rsa -%>
+ca <%= scope.lookupvar('openvpn::params::server_conf_dir') %>/<%= @server_name %>/easy-rsa/3/pki/ca.crt
+dh <%= scope.lookupvar('openvpn::params::server_conf_dir') %>/<%= @server_name %>/easy-rsa/3/pki/dh.pem
+crl-verify <%= scope.lookupvar('openvpn::params::server_conf_dir') %>/<%= @server_name %>/easy-rsa/3/pki/crl.pem
+cert <%= scope.lookupvar('openvpn::params::server_conf_dir') %>/<%= @server_name %>/easy-rsa/3/pki/issued/<%= @easy_rsa_fqdn_server %>.crt
+key <%= scope.lookupvar('openvpn::params::server_conf_dir') %>/<%= @server_name %>/easy-rsa/3/pki/private/<%= @easy_rsa_fqdn_server %>.key
+<% else -%>
+ca <%= @ca_file %>
+cert <%= @cert_file %>
+key <%= @key_file %>
+dh <%= @dh_file %>
+crl-verify <%= @crl_verify_file %>
+<% end -%>
+####
+
+<% if defined?(@client_config_dir) -%>
+client-config-dir <%= @client_config_dir %>
+<% end -%>
+
+<% if defined?(@max_clients) -%>
+max-clients <%= @max_clients %>
+<% end -%>
+
+<% if defined?(@ping) -%>
+ping <%= @ping %>
+<% end -%>
+<% if defined?(@ping_restart) -%>
+ping-restart <%= @ping_restart %>
+<% end -%>
+<% if defined?(@push_ping) -%>
+push "ping <%= @push_ping %>"
+<% end -%>
+<% if defined?(@push_ping_restart) -%>
+push "ping-restart <%= @push_ping_restart %>"
+<% end -%>
+
+<% if defined?(@ifconfig_pool_persist_file) -%>
+ifconfig-pool-persist <%= @ifconfig_pool_persist_file %> <%= @ifconfig_pool_persist_seconds %>
+<% end -%>
+<% if @persist_key -%>
+persist-key
+<% end -%>
+<% if @persist_tun -%>
+persist-tun
+<% end -%>
+
+<% if defined?(@chroot) -%>
+chroot <%= @chroot %>
+<% end -%>
+<% if defined?(@change_dir_to) -%>
+cd <%= @change_dir_to %>
+<% else -%>
+cd <%= scope.lookupvar('openvpn::params::server_conf_dir') %>/<%= @server_name %>
+<% end -%>
